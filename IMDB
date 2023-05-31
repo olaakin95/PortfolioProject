@@ -32,7 +32,7 @@ ORDER BY rating DESC
 LIMIT 5
 
 --top 5 box office hits--
-SELECT name, box_office
+SELECT name, box_office,
 FROM Movies
 ORDER BY box_office DESC
 LIMIT 5
@@ -62,7 +62,54 @@ LIMIT 5
 
 
 --How many movies in each rating category--
+Select certificate, count(*) AS number_of_movies
+FROM Movies
+group by certificate 
+order by number_of_movies DESC
+
 -- top 10 directors--
+Select directors, COUNT(*) AS number_of_movies_directed
+FROM Movies
+GROUP BY directors
+ORDER BY number_of_movies_directed DESC
+LIMIT 10
+
 -- Best years for movies--
+SELECT year, COUNT(*) AS total_movies
+FROM Movies
+GROUP BY year
+ORDER BY total_movies DESC
+LIMIT 10
 -- how many movies in each decade--
+
+SELECT 
+  COUNT(*) as number_of_movies, SUBSTR(CAST(year AS STRING),1,3) ||  '0s' AS decade
+FROM 
+  Movies
+GROUP BY decade
 -- most popular movie genre in each decade-- 
+
+WITH genre_counts AS (
+  SELECT genre, COUNT(*) AS genre_count, year
+  FROM (
+    SELECT TRIM(value) AS genre, year
+    FROM Movies
+    CROSS JOIN json_each('["' || REPLACE(genre, ',', '","') || '"]')
+  )
+  GROUP BY genre, year
+), decade_max_genre AS (
+  SELECT d.decade_start, d.decade_end, gc.genre,
+         ROW_NUMBER() OVER (PARTITION BY d.decade_start ORDER BY gc.genre_count DESC) AS rn
+  FROM (
+    SELECT 
+      year/10 * 10 + 1 AS decade_start,
+      year/10 * 10 + 10 AS decade_end
+    FROM Movies
+    GROUP BY year/10
+  ) d
+  JOIN genre_counts gc ON gc.year >= d.decade_start AND gc.year <= d.decade_end
+)
+SELECT decade_start, decade_end, genre
+FROM decade_max_genre
+WHERE rn = 1
+ORDER BY decade_start
