@@ -1,6 +1,3 @@
-Code For finding Mean, max, min and standard deviation for Daily calories burned for all logged instances
-```SELECT  Min(TotalSteps) AS min_TotalSteps, MAX(TotalSteps) AS max_TotalSteps, AVG(TotalSteps) AS mean_TotalSteps, STDDEV(TotalSteps) AS SD_TotalSteps
-FROM `my-data-project-1234-384118.fitabase.daily_activity` 
-```
+
  
  
