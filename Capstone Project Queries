@@ -6,26 +6,61 @@ FROM `my-data-project-1234-384118.fitabase.daily_activity`
 SELECT  Min(TotalSteps) AS min_TotalSteps, MAX(TotalSteps) AS max_TotalSteps, AVG(TotalSteps) AS mean_TotalSteps, STDDEV(TotalSteps) AS SD_TotalSteps
 FROM `my-data-project-1234-384118.fitabase.daily_activity` 
 
--- Average steps taking when average intensity is between 2-3
+-- Average steps taken when average intensity is between 2-3
 SELECT AVG(b.StepTotal) AS StepTotal
 FROM `my-data-project-1234-384118.fitabase.hourly_intensities` AS a
 JOIN `my-data-project-1234-384118.fitabase.hourly_steps` AS b
 ON a.id=b.id AND a.ActivityDate=b.ActivityDate AND a.ActivityHour=b.ActivityHour
 WHERE AverageIntensity>2 AND AverageIntensity<3
 
---Average steps taking when average intensity is between 1-2
+--Average steps taken when average intensity is between 1-2
 SELECT AVG(b.StepTotal) AS StepTotal
 FROM `my-data-project-1234-384118.fitabase.hourly_intensities` AS a
 JOIN `my-data-project-1234-384118.fitabase.hourly_steps` AS b
 ON a.id=b.id AND a.ActivityDate=b.ActivityDate AND a.ActivityHour=b.ActivityHour
 WHERE AverageIntensity>1 AND AverageIntensity<2
 
---Average steps taking when average intensity is less than 1
+--Average steps are taken when average intensity is less than 1--
 SELECT AVG(b.StepTotal) AS StepTotal
 FROM `my-data-project-1234-384118.fitabase.hourly_intensities` AS a
 JOIN `my-data-project-1234-384118.fitabase.hourly_steps` AS b
 ON a.id=b.id AND a.ActivityDate=b.ActivityDate AND a.ActivityHour=b.ActivityHour
 WHERE AverageIntensity>2 AND AverageIntensity<3
+
+--Participant chart query--
+SELECT ActivityDate, COUNTIF(a.id is not null) AS DailyParticipants, COUNTIF(b.id is not null) SleepDayParticipants, COUNTIF(c.id is not null) AS WeightLogParticipants
+FROM `my-data-project-1234-384118.fitabase.daily_activity` AS a
+FULL JOIN fitabase.sleep_day AS b ON a.id=b.id AND a.ActivityDate= b.SleepDay
+FULL JOIN fitabase.weight_log AS c on a.id=c.Id AND a.ActivityDate=c.Date
+GROUP BY ActivityDate
+ORDER BY ActivityDate
+
+--Percentage of Activity Level--
+SELECT
+SUM(SedentaryMinutes)/SUM(VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes+SedentaryMinutes
+) AS SedentaryMinutePercentage, 
+SUM(LightlyActiveMinutes)/SUM(VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes+SedentaryMinutes
+) AS LightlyActiveMinutePercentage, 
+SUM(FairlyActiveMinutes)/SUM(VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes+SedentaryMinutes) AS FairlyActiveMinutePercentage, SUM(VeryActiveMinutes)/SUM(VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes+SedentaryMinutes) AS VeryActiveMinutePercentage
+
+FROM `my-data-project-1234-384118.fitabase.daily_activity`
+
+--Steps and calories-- 
+SELECT a.ActivityHour AS Time, AVG(Calories) AS Calories, AVG(StepTotal) AS Steps 
+FROM `fitabase.hourly_calories` AS a
+JOIN `fitabase.hourly_steps` AS b
+ON a.id= b.id AND a.ActivityHour = b.ActivityHour
+GROUP BY a.ActivityHour
+
+-- Steps vs Sleep--
+SELECT a.id, b.StepTotal, a.TotalMinutesAsleep, ActivityDay, TotalTimeInBed
+FROM `my-data-project-1234-384118.fitabase.sleep_day` AS a
+JOIN `my-data-project-1234-384118.fitabase.daily_steps` AS b
+ON a.Id=b.Id AND a.SleepDay=b.ActivityDay
+ORDER BY StepTotal DESC
+
+
+
 
 
 
