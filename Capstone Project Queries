@@ -1,3 +1,35 @@
+-- Mean, Max, Min, Standard Deviation of daily calories--
+SELECT  Min(calories) AS min_calories, MAX(calories) AS max_calories, AVG(calories) AS mean_calories, STDDEV(calories) AS SD_calories
+FROM `my-data-project-1234-384118.fitabase.daily_activity` 
+
+-- Min, Max, mean, and standard deviation of total steps--
+SELECT  Min(TotalSteps) AS min_TotalSteps, MAX(TotalSteps) AS max_TotalSteps, AVG(TotalSteps) AS mean_TotalSteps, STDDEV(TotalSteps) AS SD_TotalSteps
+FROM `my-data-project-1234-384118.fitabase.daily_activity` 
+
+-- Average steps taking when average intensity is between 2-3
+SELECT AVG(b.StepTotal) AS StepTotal
+FROM `my-data-project-1234-384118.fitabase.hourly_intensities` AS a
+JOIN `my-data-project-1234-384118.fitabase.hourly_steps` AS b
+ON a.id=b.id AND a.ActivityDate=b.ActivityDate AND a.ActivityHour=b.ActivityHour
+WHERE AverageIntensity>2 AND AverageIntensity<3
+
+--Average steps taking when average intensity is between 1-2
+SELECT AVG(b.StepTotal) AS StepTotal
+FROM `my-data-project-1234-384118.fitabase.hourly_intensities` AS a
+JOIN `my-data-project-1234-384118.fitabase.hourly_steps` AS b
+ON a.id=b.id AND a.ActivityDate=b.ActivityDate AND a.ActivityHour=b.ActivityHour
+WHERE AverageIntensity>1 AND AverageIntensity<2
+
+--Average steps taking when average intensity is less than 1
+SELECT AVG(b.StepTotal) AS StepTotal
+FROM `my-data-project-1234-384118.fitabase.hourly_intensities` AS a
+JOIN `my-data-project-1234-384118.fitabase.hourly_steps` AS b
+ON a.id=b.id AND a.ActivityDate=b.ActivityDate AND a.ActivityHour=b.ActivityHour
+WHERE AverageIntensity>2 AND AverageIntensity<3
+
+
+
+
 
  
  
